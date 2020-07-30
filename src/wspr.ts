@@ -1,6 +1,6 @@
-import http, { IncomingMessage, ServerResponse } from "http";
-import WebSocket, { Server } from "ws";
-import portscanner from "portscanner";
+import http, { IncomingMessage, ServerResponse } from 'http';
+import WebSocket, { Server } from 'ws';
+import portscanner from 'portscanner';
 
 async function run() {
     const startingPort = 3005;
@@ -13,15 +13,17 @@ async function run() {
     clientsListener(wss);
     console.log(`WebSocket server started ws://localhost:${wssPort}`);
 
-    const server = http.createServer(async (request: IncomingMessage, response: ServerResponse) => {
-        response.writeHead(200, { 'Content-Type': 'text plain' });
-        if (request.method === 'POST') {
-            const body = await collectRequestData(request);
-            broadcast(wss, body);
-            response.end('Message proxied');
+    const server = http.createServer(
+        async (request: IncomingMessage, response: ServerResponse) => {
+            response.writeHead(200, { 'Content-Type': 'text plain' });
+            if (request.method === 'POST') {
+                const body = await collectRequestData(request);
+                broadcast(wss, body);
+                response.end('Message proxied');
+            }
+            response.end();
         }
-        response.end();
-    });
+    );
 
     const httpPort = await portscanner.findAPortNotInUse(
         startingPort,
@@ -57,7 +59,7 @@ function broadcast(wss: Server, message: string) {
             message
         )}`
     );
-    wss.clients.forEach(client => {
+    wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
             client.send(message);
         }
@@ -67,11 +69,11 @@ function broadcast(wss: Server, message: string) {
 function collectRequestData(request: IncomingMessage): Promise<string> {
     let resolve: (body: string) => void;
 
-    const promise = new Promise<string>(_resolve => {
+    const promise = new Promise<string>((_resolve) => {
         resolve = _resolve;
     });
     let body = '';
-    request.on('data', chunk => {
+    request.on('data', (chunk) => {
         body += chunk.toString();
     });
     request.on('end', () => {

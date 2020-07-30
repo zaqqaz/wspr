@@ -9,7 +9,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.config.js --mode=production"
+    "build": "webpack --config webpack.config.js --mode=production",
+    "prettier": "prettier --write '**/*.ts'"
   },
   "devDependencies": {
     "@types/node": "^14.0.27",
@@ -17,6 +18,7 @@
     "@types/ws": "^7.2.6",
     "bufferutil": "^4.0.1",
     "portscanner": "^2.2.0",
+    "prettier": "^2.0.5",
     "ts-loader": "^8.0.0",
     "typescript": "^3.9.7",
     "utf-8-validate": "^5.0.2",
