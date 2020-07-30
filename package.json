@@ -1,6 +1,6 @@
 {
   "name": "wspr",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "WebSocket proxy for post http requests. Perfect for testing purposes/mocks",
   "repository": "git@github.com:zaqqaz/wspr.git",
   "author": "Denis Artyuhovich (zaqqaz) <i@denis.by>",
