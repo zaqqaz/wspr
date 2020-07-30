@@ -1,0 +1,27 @@
+{
+  "name": "wspr",
+  "version": "1.0.0",
+  "description": "WebSocket proxy for post http requests. Perfect for testing purposes/mocks",
+  "repository": "git@github.com:zaqqaz/wspr.git",
+  "author": "Denis Artyuhovich (zaqqaz) <i@denis.by>",
+  "bin": {
+    "wspr": "./wspr.js"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config webpack.config.js --mode=production"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "@types/portscanner": "^2.1.0",
+    "@types/ws": "^7.2.6",
+    "bufferutil": "^4.0.1",
+    "portscanner": "^2.2.0",
+    "ts-loader": "^8.0.0",
+    "typescript": "^3.9.7",
+    "utf-8-validate": "^5.0.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12",
+    "wss": "^3.3.4"
+  }
+}
