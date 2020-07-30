@@ -4,6 +4,8 @@
 # WSPR
 WebSocket proxy for post http requests. Perfect for testing purposes/mocks 🚀
 
+![wssExample](https://user-images.githubusercontent.com/2823336/88941654-316c0b80-d281-11ea-88e0-91a847478893.jpg)
+
 ### Installation
 
 ```
