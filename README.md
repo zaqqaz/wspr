@@ -27,4 +27,8 @@ HTPP proxy server started http://localhost:3006
 To broadcast message to clients send a  post requests with a string/json body (via postman or curl) to http enpoint provided
 on the previous step.
 
+```
+curl -d "{"hello": "world"}" -X POST http://localhost:3006
+```
+
 ## Enjoy 🚀🥤
