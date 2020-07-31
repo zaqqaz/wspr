@@ -11,7 +11,10 @@
     "request",
     "integration"
   ],
-  "repository": "git@github.com:zaqqaz/wspr.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaqqaz/wspr.git"
+  },
   "author": "Denis Artyuhovich (zaqqaz) <i@denis.by>",
   "bin": {
     "wspr": "./bin/wspr.js"
