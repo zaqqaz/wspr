@@ -5,8 +5,8 @@ import portscanner from 'portscanner';
 async function run() {
     let startingPort = 3005;
 
-    // If client pass any parameter then it will choose a random port
-    if(process.argv.slice(2)[0] && process.argv.slice(2).includes('--randomPort')) {
+    // If client pass --randomPort as parameter then it will choose a random port
+    if(process.argv.slice(2).includes('--randomPort')) {
         startingPort = Math.floor(Math.random() * (3999 - 3005 + 1)) + 3005;
     }
     
