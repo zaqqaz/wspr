@@ -6,10 +6,10 @@ async function run() {
     let startingPort = 3005;
 
     // If client pass --randomPort as parameter then it will choose a random port
-    if(process.argv.slice(2).includes('--randomPort')) {
+    if (process.argv.slice(2).includes('--randomPort')) {
         startingPort = Math.floor(Math.random() * (3999 - 3005 + 1)) + 3005;
     }
-    
+
     const wssPort = await portscanner.findAPortNotInUse(
         startingPort,
         startingPort + 1000
@@ -21,13 +21,25 @@ async function run() {
 
     const server = http.createServer(
         async (request: IncomingMessage, response: ServerResponse) => {
-            response.writeHead(200, { 'Content-Type': 'text plain' });
-            if (request.method === 'POST') {
-                const body = await collectRequestData(request);
-                broadcast(wss, body);
-                response.end('Message proxied');
+            const headers = {
+                'Content-Type': 'text plain',
+            };
+
+            if (request.method === 'OPTIONS') {
+                response.writeHead(204, {
+                    'Access-Control-Allow-Headers': '*',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                });
+                response.end();
+            } else if (request.method === 'POST') {
+                broadcast(wss, await collectRequestData(request));
+                response.writeHead(200, headers);
+                response.end('Payload has been transmitted');
+            } else {
+                response.writeHead(405, headers);
+                response.end('Method not allowed. Use POST method to broadcast your message.');
             }
-            response.end();
         }
     );
 
