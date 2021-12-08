@@ -1,12 +1,16 @@
-import http, { IncomingMessage, ServerResponse } from 'http';
-import WebSocket, { Server } from 'ws';
+import http, {IncomingMessage, ServerResponse } from 'http';
+import { createServer } from 'https';
+import { readFileSync } from 'fs';
+import { WebSocketServer, WebSocket } from 'ws';
 import portscanner from 'portscanner';
+
+const args = process.argv.slice(2);
 
 async function run() {
     let startingPort = 3005;
 
     // If client pass --randomPort as parameter then it will choose a random port
-    if (process.argv.slice(2).includes('--randomPort')) {
+    if (args.includes('--randomPort')) {
         startingPort = Math.floor(Math.random() * (3999 - 3005 + 1)) + 3005;
     }
 
@@ -15,9 +19,27 @@ async function run() {
         startingPort + 1000
     );
 
-    const wss = new WebSocket.Server({ port: wssPort });
-    clientsListener(wss);
-    console.log(`WebSocket server started ws://localhost:${wssPort}`);
+    let wss: WebSocketServer;
+
+    const keyPath = args.find(arg => arg.startsWith('--key='))?.match(/--key=(\S+)/)?.[1];
+    const certPath = args.find(arg => arg.startsWith('--cert='))?.match(/--cert=(\S+)/)?.[1];
+    if (keyPath && certPath) {
+        const httpsServer = createServer({
+            key: readFileSync(keyPath),
+            cert: readFileSync(certPath)
+        });
+        httpsServer.listen(wssPort);
+
+        wss = new WebSocketServer({ server: httpsServer });
+
+        clientsListener(wss);
+        console.log(`WebSocket server started wss://localhost:${wssPort}`);
+    } else {
+        wss = new WebSocketServer({ port: wssPort });
+
+        clientsListener(wss);
+        console.log(`WebSocket server started ws://localhost:${wssPort}`);
+    }
 
     const server = http.createServer(
         async (request: IncomingMessage, response: ServerResponse) => {
@@ -57,7 +79,7 @@ async function run() {
     });
 }
 
-function clientsListener(wss: Server) {
+function clientsListener(wss: WebSocketServer) {
     wss.on('connection', function connection(ws) {
         console.log(`Client connected at: ${Date.now()}`);
         ws.on('message', function incoming(message) {
@@ -66,7 +88,7 @@ function clientsListener(wss: Server) {
     });
 }
 
-function broadcast(wss: Server, message: string) {
+function broadcast(wss: WebSocketServer, message: string) {
     if (!wss.clients?.size) {
         console.log('No active clients');
         return;
