@@ -1,4 +1,4 @@
-import http, {IncomingMessage, ServerResponse } from 'http';
+import http, { IncomingMessage, ServerResponse } from 'http';
 import { createServer } from 'https';
 import { readFileSync } from 'fs';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -21,12 +21,16 @@ async function run() {
 
     let wss: WebSocketServer;
 
-    const keyPath = args.find(arg => arg.startsWith('--key='))?.match(/--key=(\S+)/)?.[1];
-    const certPath = args.find(arg => arg.startsWith('--cert='))?.match(/--cert=(\S+)/)?.[1];
+    const keyPath = args
+        .find((arg) => arg.startsWith('--key='))
+        ?.match(/--key=(\S+)/)?.[1];
+    const certPath = args
+        .find((arg) => arg.startsWith('--cert='))
+        ?.match(/--cert=(\S+)/)?.[1];
     if (keyPath && certPath) {
         const httpsServer = createServer({
             key: readFileSync(keyPath),
-            cert: readFileSync(certPath)
+            cert: readFileSync(certPath),
         });
         httpsServer.listen(wssPort);
 
@@ -60,7 +64,9 @@ async function run() {
                 response.end('Payload has been transmitted');
             } else {
                 response.writeHead(405, headers);
-                response.end('Method not allowed. Use POST method to broadcast your message.');
+                response.end(
+                    'Method not allowed. Use POST method to broadcast your message.'
+                );
             }
         }
     );
@@ -83,7 +89,7 @@ function clientsListener(wss: WebSocketServer) {
     wss.on('connection', function connection(ws) {
         console.log(`Client connected at: ${Date.now()}`);
         ws.on('message', function incoming(message) {
-            console.log('Message received from client: ', message);
+            console.log('Message received from client: ', message.toString());
         });
     });
 }
