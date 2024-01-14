@@ -21,6 +21,7 @@
   },
   "license": "MIT",
   "scripts": {
+    "start": "./bin/wspr.js",
     "build": "webpack --config webpack.config.js --mode=production",
     "prettier": "prettier --write '**/*.ts'"
   },

@@ -3,6 +3,8 @@ import { createServer } from 'https';
 import { readFileSync } from 'fs';
 import { WebSocketServer, WebSocket } from 'ws';
 import portscanner from 'portscanner';
+import url from 'url';
+import querystring from 'querystring';
 
 const args = process.argv.slice(2);
 
@@ -35,8 +37,6 @@ async function run() {
         httpsServer.listen(wssPort);
 
         wss = new WebSocketServer({ server: httpsServer });
-
-        clientsListener(wss);
         console.log(`WebSocket server started wss://localhost:${wssPort}`);
     } else {
         wss = new WebSocketServer({ port: wssPort });
@@ -44,6 +44,7 @@ async function run() {
         clientsListener(wss);
         console.log(`WebSocket server started ws://localhost:${wssPort}`);
     }
+    clientsListener(wss);
 
     const server = http.createServer(
         async (request: IncomingMessage, response: ServerResponse) => {
@@ -86,10 +87,51 @@ async function run() {
 }
 
 function clientsListener(wss: WebSocketServer) {
-    wss.on('connection', function connection(ws) {
+    wss.on('connection', function connection(ws,   request) {
+        const proxyWsUrl = args
+            .find((arg) => arg.startsWith('--proxyWsUrl='))
+            ?.match(/--proxyWsUrl=(\S+)/)?.[1];
+
+        const notifyProxyServer: ((message: string) => void)[] = [];
+
+        setTimeout(() => {
+            console.log('Query parameters after delay:', request.url);
+        }, 100);
+
+        if(proxyWsUrl) {
+            console.log('Connecting to proxy server')
+            // Append query parameters to the proxy WebSocket URL
+            const queryParameters = url.parse(request.url || 'http://localhost', true).query;
+
+            // Append query parameters to the proxy WebSocket URL
+            const queryString = querystring.stringify(queryParameters);
+            const proxyWsUrlWithParams = proxyWsUrl + (queryString ? `?${queryString}` : '');
+            const proxyWs = new WebSocket(proxyWsUrlWithParams);
+
+            proxyWs.on('open', () => {
+                console.log(`Proxy WebSocket connection established with ${proxyWsUrlWithParams}`);
+
+                notifyProxyServer.push((message: string) => {
+                    if (proxyWs && proxyWs.readyState === WebSocket.OPEN) {
+                        proxyWs.send(message);
+                    }
+                })
+            });
+
+            proxyWs.on('message', (message) => {
+                console.log('Message received from proxy server:', message.toString());
+                // Broadcast the message to connected clients
+                broadcast(wss, message.toString());
+            });
+        }
+
         console.log(`Client connected at: ${Date.now()}`);
         ws.on('message', function incoming(message) {
-            console.log('Message received from client: ', message.toString());
+            const stringMessage = message.toString();
+            console.log('Message received from client: ',stringMessage);
+            for (const notify of notifyProxyServer) {
+                notify(stringMessage);
+            }
         });
     });
 }
