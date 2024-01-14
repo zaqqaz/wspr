@@ -1,6 +1,6 @@
 {
   "name": "wspr",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "WebSocket proxy for post http requests. Perfect for testing purposes/mocks",
   "keywords": [
     "websocket",
