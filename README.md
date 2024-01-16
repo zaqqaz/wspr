@@ -53,6 +53,6 @@ WebSocket server started wss://localhost:3005
 ```
 ### Proxy and extend existing WebSocket
 
-Just specify --proxyWsUrl='wss://your.url/andPath' and all the messages from your actual server will be proxied via WSPR with the ability for you to send any extra messages to your clients (useful during new feature implementation when the server has not implemented some messages yet).
+Just specify `--proxyWsUrl='wss://your.url/andPath'` and all the messages from your actual server will be proxied via WSPR with the ability for you to send any extra messages to your clients (useful during new feature implementation when the server has not implemented some messages yet).
 
 ## Enjoy 🚀🥤
