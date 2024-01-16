@@ -26,8 +26,7 @@ HTPP proxy server started http://localhost:3006
 ```
 
 ### Broadcast message to clients: 
-To broadcast message to clients send a  post requests with a string/json body (via postman or curl) to http enpoint provided
-on the previous step.
+To broadcast a message to clients, send a POST request with a string/JSON body (via Postman or cURL) to the HTTP endpoint provided in the previous step.
 
 ```
 curl -d "{"hello": "world"}" -X POST http://localhost:3006
@@ -52,5 +51,8 @@ wspr --cert=./localhost.crt --key=./localhost.key
 ```
 WebSocket server started wss://localhost:3005
 ```
+### Proxy and extend existing WebSocket
+
+Just specify --proxyWsUrl='wss://your.url/andPath' and all the messages from your actual server will be proxied via WSPR with the ability for you to send any extra messages to your clients (useful during new feature implementation when the server has not implemented some messages yet).
 
 ## Enjoy 🚀🥤
